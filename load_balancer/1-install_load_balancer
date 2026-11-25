@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Install and configure HAProxy as a round-robin load balancer
+
+apt-get update
+apt-get -y install haproxy
+
+echo "18.132.198.239 7356-web-01" >> /etc/hosts
+echo "13.135.162.185 7356-web-02" >> /etc/hosts
+
+cat > /etc/haproxy/haproxy.cfg << 'CFG'
+global
+    maxconn 256
+
+defaults
+    mode http
+    timeout connect 5s
+    timeout client 50s
+    timeout server 50s
+
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server 7356-web-01 18.132.198.239:80 check
+    server 7356-web-02 13.135.162.185:80 check
+CFG
+
+haproxy -f /etc/haproxy/haproxy.cfg -c
+service haproxy restart
