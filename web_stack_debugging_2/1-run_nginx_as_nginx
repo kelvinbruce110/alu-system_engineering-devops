@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Configure Nginx to run as the nginx user and listen on port 8080
+
+chmod 644 /etc/nginx/nginx.conf
+sed -i '1c\user nginx;' /etc/nginx/nginx.conf
+sed -i 's/80/8080/g' /etc/nginx/sites-available/default
+
+pkill apache2
+service nginx stop
+
+id nginx >/dev/null 2>&1 || useradd -r -s /usr/sbin/nologin nginx
+sudo -H -u nginx bash -c "service nginx start"
