@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Configure UFW to allow only SSH, HTTP and HTTPS
+
+apt-get update
+apt-get -y install ufw
+
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw --force enable
